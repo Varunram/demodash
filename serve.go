@@ -25,12 +25,18 @@ func renderHTML() (string, error) {
 }
 
 type base struct {
-	BTCPrice  float64
-	ETHPrice  float64
-	XRPPrice  float64
-	BTCVolume float64
-	ETHVolume float64
-	XRPVolume float64
+	BTCPrice   float64
+	ETHPrice   float64
+	XRPPrice   float64
+	LTCPrice   float64
+	LINKPrice  float64
+	ADAPrice   float64
+	BTCVolume  float64
+	ETHVolume  float64
+	XRPVolume  float64
+	LTCVolume  float64
+	LINKVolume float64
+	ADAVolume  float64
 }
 
 // Return is the structure used to feed data to the frontend
@@ -82,6 +88,32 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Binance.LTCPrice, err = BinanceTicker("LTC")
+			if err != nil {
+				Return.Binance.LTCPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.LINKPrice, err = BinanceTicker("LINK")
+			if err != nil {
+				Return.Binance.LINKPrice = -1
+			}
+		}(&wg)
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.ADAPrice, err = BinanceTicker("ADA")
+			if err != nil {
+				Return.Binance.ADAPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Binance.BTCVolume, err = BinanceVolume("BTC")
 			if err != nil {
 				Return.Binance.BTCVolume = -1
@@ -103,6 +135,33 @@ func frontend() {
 			Return.Binance.XRPVolume, err = BinanceVolume("XRP")
 			if err != nil {
 				Return.Binance.XRPVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.LTCVolume, err = BinanceVolume("LTC")
+			if err != nil {
+				Return.Binance.LTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.LINKVolume, err = BinanceVolume("LINK")
+			if err != nil {
+				Return.Binance.LINKVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.ADAVolume, err = BinanceVolume("ADA")
+			if err != nil {
+				Return.Binance.ADAVolume = -1
 			}
 		}(&wg)
 
@@ -139,6 +198,26 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Coinbase.LTCPrice, Return.Coinbase.LTCVolume, err = CoinbaseTicker("LTC")
+			if err != nil {
+				Return.Coinbase.LTCPrice = -1
+				Return.Coinbase.LTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Coinbase.LINKPrice, Return.Coinbase.LINKVolume, err = CoinbaseTicker("LINK")
+			if err != nil {
+				Return.Coinbase.LINKPrice = -1
+				Return.Coinbase.LINKVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Kraken.BTCPrice, Return.Kraken.BTCVolume, err = KrakenTicker("BTC")
 			if err != nil {
 				Return.Kraken.BTCPrice = -1
@@ -169,6 +248,36 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Kraken.LTCPrice, Return.Kraken.LTCVolume, err = KrakenTicker("LTC")
+			if err != nil {
+				Return.Kraken.LTCPrice = -1
+				Return.Kraken.LTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Kraken.LINKPrice, Return.Kraken.LINKVolume, err = KrakenTicker("LINK")
+			if err != nil {
+				Return.Kraken.LINKPrice = -1
+				Return.Kraken.LINKVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Kraken.ADAPrice, Return.Kraken.ADAVolume, err = KrakenTicker("ADA")
+			if err != nil {
+				Return.Kraken.ADAPrice = -1
+				Return.Kraken.ADAVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Bitfinex.BTCPrice, Return.Bitfinex.BTCVolume, err = BitfinexTicker("BTC")
 			if err != nil {
 				Return.Bitfinex.BTCPrice = -1
@@ -193,6 +302,36 @@ func frontend() {
 			if err != nil {
 				Return.Bitfinex.XRPPrice = -1
 				Return.Bitfinex.XRPVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Bitfinex.LTCPrice, Return.Bitfinex.LTCVolume, err = BitfinexTicker("LTC")
+			if err != nil {
+				Return.Bitfinex.LTCPrice = -1
+				Return.Bitfinex.LTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Bitfinex.LINKPrice, Return.Bitfinex.LINKVolume, err = BitfinexTicker("LINK")
+			if err != nil {
+				Return.Bitfinex.LINKPrice = -1
+				Return.Bitfinex.LINKVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Bitfinex.ADAPrice, Return.Bitfinex.ADAVolume, err = BitfinexTicker("ADA")
+			if err != nil {
+				Return.Bitfinex.ADAPrice = -1
+				Return.Bitfinex.ADAVolume = -1
 			}
 		}(&wg)
 

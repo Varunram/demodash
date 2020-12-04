@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>Cryptocurrency Demo Dashboard</title>
-  <link rel="stylesheet" href="/static/style.css">
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <title>Cryptocurrency Demo Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
-<!-- partial:index.partial.html -->
-<h1>Cryptocurrency Demo Dashboard</h1>
+    <!-- partial:index.partial.html -->
+    <h1>Demo Dashboard</h1><br />
     <table>
         <thead>
             <tr>
-                <th rowspan="2" colspan="1">Name</th>
-                <th rowspan="1" colspan="2">BTC</th>
-                <th rowspan="1" colspan="2">ETH</th>
-                <th rowspan="1" colspan="2">XRP</th>
+                <th rowspan="2" colspan="1">Ticker</th>
+                <th rowspan="1" colspan="2">Binance</th>
+                <th rowspan="1" colspan="2">Coinbase</th>
+                <th rowspan="1" colspan="2">Kraken</th>
+                <th rowspan="1" colspan="2">Bitfinex</th>
             </tr>
             <tr>
+                <th rowspan="2">Price</th>
+                <th rowspan="2">Volume</th>
                 <th rowspan="2">Price</th>
                 <th rowspan="2">Volume</th>
                 <th rowspan="2">Price</th>
@@ -28,44 +32,76 @@
         </thead>
         <tbody>
             <tr>
-                <td>Binance</td>
+                <td>BTC</td>
                 <td>{{.Binance.BTCPrice}}</td>
                 <td>{{.Binance.BTCVolume}}</td>
-                <td>{{.Binance.ETHPrice}}</td>
-                <td>{{.Binance.ETHVolume}}</td>
-                                <td>{{.Binance.XRPPrice}}</td>
-                <td>{{.Binance.XRPVolume}}</td>
-            </tr>
-            <tr>
-                <td>Coinbase</td>
                 <td>{{.Coinbase.BTCPrice}}</td>
                 <td>{{.Coinbase.BTCVolume}}</td>
-                <td>{{.Coinbase.ETHPrice}}</td>
-                <td>{{.Coinbase.ETHVolume}}</td>
-                <td>{{.Coinbase.XRPPrice}}</td>
-                <td>{{.Coinbase.XRPVolume}}</td>
-            </tr>
-            <tr>
-                <td>Kraken</td>
                 <td>{{.Kraken.BTCPrice}}</td>
                 <td>{{.Kraken.BTCVolume}}</td>
-                <td>{{.Kraken.ETHPrice}}</td>
-                <td>{{.Kraken.ETHVolume}}</td>
-                <td>{{.Kraken.XRPPrice}}</td>
-                <td>{{.Kraken.XRPVolume}}</td>
-            </tr>
-            <tr>
-                <td>Bitfinex</td>
                 <td>{{.Bitfinex.BTCPrice}}</td>
                 <td>{{.Bitfinex.BTCVolume}}</td>
+            </tr>
+            <tr>
+                <td>ETH</td>
+                <td>{{.Binance.ETHPrice}}</td>
+                <td>{{.Binance.ETHVolume}}</td>
+                <td>{{.Coinbase.ETHPrice}}</td>
+                <td>{{.Coinbase.ETHVolume}}</td>
+                <td>{{.Kraken.ETHPrice}}</td>
+                <td>{{.Kraken.ETHVolume}}</td>
                 <td>{{.Bitfinex.ETHPrice}}</td>
                 <td>{{.Bitfinex.ETHVolume}}</td>
+            </tr>
+            <tr>
+                <td>XRP</td>
+                <td>{{.Binance.XRPPrice}}</td>
+                <td>{{.Binance.XRPVolume}}</td>
+                <td>{{.Coinbase.XRPPrice}}</td>
+                <td>{{.Coinbase.XRPVolume}}</td>
+                <td>{{.Kraken.XRPPrice}}</td>
+                <td>{{.Kraken.XRPVolume}}</td>
                 <td>{{.Bitfinex.XRPPrice}}</td>
                 <td>{{.Bitfinex.XRPVolume}}</td>
+
+            </tr>
+            <tr>
+                <td>LTC</td>
+                <td>{{.Binance.LTCPrice}}</td>
+                <td>{{.Binance.LTCVolume}}</td>
+                <td>{{.Coinbase.LTCPrice}}</td>
+                <td>{{.Coinbase.LTCVolume}}</td>
+                <td>{{.Kraken.LTCPrice}}</td>
+                <td>{{.Kraken.LTCVolume}}</td>
+                <td>{{.Bitfinex.LTCPrice}}</td>
+                <td>{{.Bitfinex.LTCVolume}}</td>
+            </tr>
+            <tr>
+                <td>LINK</td>
+                <td>{{.Binance.LINKPrice}}</td>
+                <td>{{.Binance.LINKVolume}}</td>
+                <td>{{.Coinbase.LINKPrice}}</td>
+                <td>{{.Coinbase.LINKVolume}}</td>
+                <td>{{.Kraken.LINKPrice}}</td>
+                <td>{{.Kraken.LINKVolume}}</td>
+                <td>{{.Bitfinex.LINKPrice}}</td>
+                <td>{{.Bitfinex.LINKVolume}}</td>
+            </tr>
+            <tr>
+                <td>ADA</td>
+                <td>{{.Binance.ADAPrice}}</td>
+                <td>{{.Binance.ADAVolume}}</td>
+                <td>Not Listed</td>
+                <td>Not Listed</td>
+                <td>{{.Kraken.ADAPrice}}</td>
+                <td>{{.Kraken.ADAVolume}}</td>
+                <td>{{.Bitfinex.ADAPrice}}</td>
+                <td>{{.Bitfinex.ADAVolume}}</td>
             </tr>
         </tbody>
     </table>
-<!-- partial -->
-  
+    <!-- partial -->
+
 </body>
+
 </html>
