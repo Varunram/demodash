@@ -4,19 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"math"
-	"sync"
+	"strings"
 
 	errors "github.com/pkg/errors"
 
 	erpc "github.com/Varunram/essentials/rpc"
 	utils "github.com/Varunram/essentials/utils"
 )
-
-// package tickers implements handlers for getting price from cryptocurrencyu markets
-
-// we take the three largest (no wash trading) markets for BTC USD and return their weighted average
-// to arrive at the price for BTC-USD. This price is indicative and not final since there will be latency
-// involved between price display and trade finality.
 
 // BinanceReqBTC is the binance ticker from the API
 var BinanceReqBTC = "https://api.binance.com/api/v1/ticker/price?symbol=BTCUSDT"
@@ -40,6 +34,9 @@ var BinanceVolBTC = "https://api.binance.com/api/v1/ticker/24hr?symbol=BTCUSDT"
 
 // BinanceVolETH is the binance ticker from the API
 var BinanceVolETH = "https://api.binance.com/api/v1/ticker/24hr?symbol=ETHUSDT"
+
+var BitfinexReqBTC = "https://api-pub.bitfinex.com/v2/tickers?symbols=tBTCUSD"
+var BitfinexReqETH = "https://api-pub.bitfinex.com/v2/tickers?symbols=tETHUSD"
 
 // BinanceTickerResponse defines the ticker API response from Binanace
 type BinanceTickerResponse struct {
@@ -76,6 +73,11 @@ type KrakenTickerResponse struct {
 			V []string // volume array(<today>, <last 24 hours>)
 		}
 	}
+}
+
+type BitfinexTickerResponse struct {
+	Price  string
+	Volume string
 }
 
 // BinanceTicker gets price data from Binance
@@ -147,7 +149,7 @@ func BinanceVolume(coin string) (float64, error) {
 }
 
 // CoinbaseTicker gets ticker data from coinbase
-func CoinbaseTicker(coin string) (float64, error) {
+func CoinbaseTicker(coin string) (float64, float64, error) {
 	var data []byte
 	var err error
 	if coin == "BTC" {
@@ -157,55 +159,32 @@ func CoinbaseTicker(coin string) (float64, error) {
 	}
 	if err != nil {
 		log.Println("did not get response", err)
-		return -1, errors.Wrap(err, "did not get response from Coinbase API")
+		return -1, -1, errors.Wrap(err, "did not get response from Coinbase API")
 	}
 
 	var response CoinbaseTickerResponse
 	err = json.Unmarshal(data, &response)
 	if err != nil {
-		return -1, errors.Wrap(err, "could not unmarshal response")
+		return -1, -1, errors.Wrap(err, "could not unmarshal response")
 	}
 
 	// response.Price is in string, need to convert it to float
 	price, err := utils.ToFloat(response.Price)
 	if err != nil {
-		return -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
-	}
-
-	return math.Round(price*1000) / 1000, nil
-}
-
-// CoinbaseVolume gets volume data from coinbase
-func CoinbaseVolume(coin string) (float64, error) {
-	var data []byte
-	var err error
-	if coin == "BTC" {
-		data, err = erpc.GetRequest(CoinbaseReqBTC)
-	} else if coin == "ETH" {
-		data, err = erpc.GetRequest(CoinbaseReqETH)
-	}
-	if err != nil {
-		log.Println("did not get response", err)
-		return -1, errors.Wrap(err, "did not get response from Coinbase API")
-	}
-
-	var response CoinbaseTickerResponse
-	err = json.Unmarshal(data, &response)
-	if err != nil {
-		return -1, errors.Wrap(err, "could not unmarshal response")
+		return -1, -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
 	}
 
 	// response.Price is in string, need to convert it to float
 	volume, err := utils.ToFloat(response.Volume)
 	if err != nil {
-		return -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
+		return -1, -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
 	}
 
-	return math.Round(volume*1000) / 1000, nil
+	return math.Round(price*1000) / 1000, math.Round(volume*1000) / 1000, nil
 }
 
 // KrakenTicker gets ticker data from kraken
-func KrakenTicker(coin string) (float64, error) {
+func KrakenTicker(coin string) (float64, float64, error) {
 	var data []byte
 	var err error
 	if coin == "BTC" {
@@ -215,13 +194,13 @@ func KrakenTicker(coin string) (float64, error) {
 	}
 	if err != nil {
 		log.Println("did not get response", err)
-		return -1, errors.Wrap(err, "did not get response from Kraken API")
+		return -1, -1, errors.Wrap(err, "did not get response from Kraken API")
 	}
 
 	var response KrakenTickerResponse
 	err = json.Unmarshal(data, &response)
 	if err != nil {
-		return -1, errors.Wrap(err, "could not unmarshal response")
+		return -1, -1, errors.Wrap(err, "could not unmarshal response")
 	}
 
 	// response.Price is in string, need to convert it to float
@@ -232,119 +211,50 @@ func KrakenTicker(coin string) (float64, error) {
 		price, err = utils.ToFloat(response.Result.XETHZUSD.C[0])
 	}
 
-	if err != nil {
-		return -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
-	}
-
-	return math.Round(price*1000) / 1000, nil
-}
-
-// KrakenVolume gets volume data from kraken
-func KrakenVolume(coin string) (float64, error) {
-	var data []byte
-	var err error
-	if coin == "BTC" {
-		data, err = erpc.GetRequest(KrakenReqBTC)
-	} else if coin == "ETH" {
-		data, err = erpc.GetRequest(KrakenReqETH)
-	}
-	if err != nil {
-		log.Println("did not get response", err)
-		return -1, errors.Wrap(err, "did not get response from Kraken API")
-	}
-
-	var response KrakenTickerResponse
-	err = json.Unmarshal(data, &response)
-	if err != nil {
-		return -1, errors.Wrap(err, "could not unmarshal response")
-	}
-
 	var volume float64
 	if coin == "BTC" {
 		volume, err = utils.ToFloat(response.Result.XXBTZUSD.V[1]) // we want volume over the last 24 hours
 	} else if coin == "ETH" {
 		volume, err = utils.ToFloat(response.Result.XETHZUSD.V[1]) // we want volume over the last 24 hours
 	}
+
 	if err != nil {
-		return -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
+		return -1, -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
 	}
 
-	return math.Round(volume*1000) / 1000, nil
+	return math.Round(price*1000) / 1000, math.Round(volume*1000) / 1000, nil
 }
 
-// Collate collates multiple exchange data
-func Collate(coin string) (float64, error) {
-	var wg sync.WaitGroup
+// BitfinexTicker gets ticker data from kraken
+func BitfinexTicker(coin string) (float64, float64, error) {
+	var data []byte
+	var err error
+	if coin == "BTC" {
+		data, err = erpc.GetRequest(BitfinexReqBTC)
+	} else if coin == "ETH" {
+		data, err = erpc.GetRequest(BitfinexReqETH)
+	}
+	if err != nil {
+		log.Println("did not get response", err)
+		return -1, -1, errors.Wrap(err, "did not get response from Kraken API")
+	}
 
-	binanceVolume, cbVolume, krakenVolume,
-		binanceTicker, cbTicker, krakenTicker := 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+	response := string(data)
+	response = response[1:]
+	response = response[0 : len(response)-1]
 
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		binanceVolume, err = CoinbaseVolume(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
+	responseArr := strings.Split(response, ",")
 
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		cbVolume, err = CoinbaseVolume(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
+	price, err := utils.ToFloat(responseArr[1])
+	if err != nil {
+		return -1, -1, errors.Wrap(err, "did not get response from Kraken API")
+	}
 
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		krakenVolume, err = KrakenVolume(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
+	volume, err := utils.ToFloat(responseArr[8])
+	if err != nil {
+		return -1, -1, errors.Wrap(err, "did not get response from Kraken API")
+	}
 
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		binanceTicker, err = CoinbaseTicker(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
-
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		cbTicker, err = CoinbaseTicker(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
-
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		var err error
-		krakenTicker, err = KrakenTicker(coin)
-		if err != nil {
-			log.Println(err)
-		}
-	}(&wg)
-
-	wg.Wait()
-
-	netVolume := binanceVolume + cbVolume + krakenVolume
-
-	// return weighted average of all the prices
-	return binanceTicker*(binanceVolume/netVolume) +
-		cbTicker*(cbVolume/netVolume) +
-		krakenTicker*(krakenVolume/netVolume), nil
+	// SYMBOL,BID, BID_SIZE, ASK, ASK_SIZE, DAILY_CHANGE, DAILY_CHANGE_RELATIVE, LAST_PRICE, VOLUME, HIGH, LOW
+	return math.Round(price*1000) / 1000, math.Round(volume*1000) / 1000, nil
 }

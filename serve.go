@@ -36,6 +36,7 @@ var Return struct {
 	Binance  base
 	Coinbase base
 	Kraken   base
+	Bitfinex base
 }
 
 func frontend() {
@@ -88,17 +89,9 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Coinbase.BTCPrice, err = CoinbaseTicker("BTC")
+			Return.Coinbase.BTCPrice, Return.Coinbase.BTCVolume, err = CoinbaseTicker("BTC")
 			if err != nil {
 				Return.Coinbase.BTCPrice = -1
-			}
-		}(&wg)
-
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			Return.Coinbase.BTCVolume, err = CoinbaseVolume("BTC")
-			if err != nil {
 				Return.Coinbase.BTCVolume = -1
 			}
 		}(&wg)
@@ -106,17 +99,9 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Coinbase.ETHPrice, err = CoinbaseTicker("ETH")
+			Return.Coinbase.ETHPrice, Return.Coinbase.ETHVolume, err = CoinbaseTicker("ETH")
 			if err != nil {
 				Return.Coinbase.ETHPrice = -1
-			}
-		}(&wg)
-
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			Return.Coinbase.ETHVolume, err = CoinbaseVolume("ETH")
-			if err != nil {
 				Return.Coinbase.ETHVolume = -1
 			}
 		}(&wg)
@@ -124,17 +109,9 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Kraken.BTCPrice, err = KrakenTicker("BTC")
+			Return.Kraken.BTCPrice, Return.Kraken.BTCVolume, err = KrakenTicker("BTC")
 			if err != nil {
 				Return.Kraken.BTCPrice = -1
-			}
-		}(&wg)
-
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
-			Return.Kraken.BTCVolume, err = KrakenVolume("BTC")
-			if err != nil {
 				Return.Kraken.BTCVolume = -1
 			}
 		}(&wg)
@@ -142,18 +119,30 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Kraken.ETHPrice, err = KrakenTicker("ETH")
+			Return.Kraken.ETHPrice, Return.Kraken.ETHVolume, err = KrakenTicker("ETH")
 			if err != nil {
 				Return.Kraken.ETHPrice = -1
+				Return.Kraken.ETHVolume = -1
 			}
 		}(&wg)
 
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Kraken.ETHVolume, err = KrakenVolume("ETH")
+			Return.Bitfinex.BTCPrice, Return.Bitfinex.BTCVolume, err = BitfinexTicker("BTC")
 			if err != nil {
-				Return.Kraken.ETHVolume = -1
+				Return.Bitfinex.BTCPrice = -1
+				Return.Bitfinex.BTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Bitfinex.ETHPrice, Return.Bitfinex.ETHVolume, err = BitfinexTicker("ETH")
+			if err != nil {
+				Return.Bitfinex.ETHPrice = -1
+				Return.Bitfinex.ETHVolume = -1
 			}
 		}(&wg)
 
