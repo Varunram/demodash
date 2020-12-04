@@ -27,8 +27,10 @@ func renderHTML() (string, error) {
 type base struct {
 	BTCPrice  float64
 	ETHPrice  float64
+	XRPPrice  float64
 	BTCVolume float64
 	ETHVolume float64
+	XRPVolume float64
 }
 
 // Return is the structure used to feed data to the frontend
@@ -62,15 +64,6 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			Return.Binance.BTCVolume, err = BinanceVolume("BTC")
-			if err != nil {
-				Return.Binance.BTCVolume = -1
-			}
-		}(&wg)
-
-		wg.Add(1)
-		go func(wg *sync.WaitGroup) {
-			defer wg.Done()
 			Return.Binance.ETHPrice, err = BinanceTicker("ETH")
 			if err != nil {
 				Return.Binance.ETHPrice = -1
@@ -80,9 +73,36 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Binance.XRPPrice, err = BinanceTicker("XRP")
+			if err != nil {
+				Return.Binance.XRPPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.BTCVolume, err = BinanceVolume("BTC")
+			if err != nil {
+				Return.Binance.BTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Binance.ETHVolume, err = BinanceVolume("ETH")
 			if err != nil {
 				Return.Binance.ETHVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.XRPVolume, err = BinanceVolume("XRP")
+			if err != nil {
+				Return.Binance.XRPVolume = -1
 			}
 		}(&wg)
 
@@ -109,6 +129,16 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Coinbase.XRPPrice, Return.Coinbase.XRPVolume, err = CoinbaseTicker("XRP")
+			if err != nil {
+				Return.Coinbase.XRPPrice = -1
+				Return.Coinbase.XRPVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Kraken.BTCPrice, Return.Kraken.BTCVolume, err = KrakenTicker("BTC")
 			if err != nil {
 				Return.Kraken.BTCPrice = -1
@@ -129,6 +159,16 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Kraken.XRPPrice, Return.Kraken.XRPVolume, err = KrakenTicker("XRP")
+			if err != nil {
+				Return.Kraken.XRPPrice = -1
+				Return.Kraken.XRPVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Bitfinex.BTCPrice, Return.Bitfinex.BTCVolume, err = BitfinexTicker("BTC")
 			if err != nil {
 				Return.Bitfinex.BTCPrice = -1
@@ -143,6 +183,16 @@ func frontend() {
 			if err != nil {
 				Return.Bitfinex.ETHPrice = -1
 				Return.Bitfinex.ETHVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Bitfinex.XRPPrice, Return.Bitfinex.XRPVolume, err = BitfinexTicker("XRP")
+			if err != nil {
+				Return.Bitfinex.XRPPrice = -1
+				Return.Bitfinex.XRPVolume = -1
 			}
 		}(&wg)
 

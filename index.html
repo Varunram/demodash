@@ -15,8 +15,11 @@
                 <th rowspan="2" colspan="1">Name</th>
                 <th rowspan="1" colspan="2">BTC</th>
                 <th rowspan="1" colspan="2">ETH</th>
+                <th rowspan="1" colspan="2">XRP</th>
             </tr>
             <tr>
+                <th rowspan="2">Price</th>
+                <th rowspan="2">Volume</th>
                 <th rowspan="2">Price</th>
                 <th rowspan="2">Volume</th>
                 <th rowspan="2">Price</th>
@@ -30,6 +33,8 @@
                 <td>{{.Binance.BTCVolume}}</td>
                 <td>{{.Binance.ETHPrice}}</td>
                 <td>{{.Binance.ETHVolume}}</td>
+                                <td>{{.Binance.XRPPrice}}</td>
+                <td>{{.Binance.XRPVolume}}</td>
             </tr>
             <tr>
                 <td>Coinbase</td>
@@ -37,6 +42,8 @@
                 <td>{{.Coinbase.BTCVolume}}</td>
                 <td>{{.Coinbase.ETHPrice}}</td>
                 <td>{{.Coinbase.ETHVolume}}</td>
+                <td>{{.Coinbase.XRPPrice}}</td>
+                <td>{{.Coinbase.XRPVolume}}</td>
             </tr>
             <tr>
                 <td>Kraken</td>
@@ -44,6 +51,8 @@
                 <td>{{.Kraken.BTCVolume}}</td>
                 <td>{{.Kraken.ETHPrice}}</td>
                 <td>{{.Kraken.ETHVolume}}</td>
+                <td>{{.Kraken.XRPPrice}}</td>
+                <td>{{.Kraken.XRPVolume}}</td>
             </tr>
             <tr>
                 <td>Bitfinex</td>
@@ -51,6 +60,8 @@
                 <td>{{.Bitfinex.BTCVolume}}</td>
                 <td>{{.Bitfinex.ETHPrice}}</td>
                 <td>{{.Bitfinex.ETHVolume}}</td>
+                <td>{{.Bitfinex.XRPPrice}}</td>
+                <td>{{.Bitfinex.XRPVolume}}</td>
             </tr>
         </tbody>
     </table>

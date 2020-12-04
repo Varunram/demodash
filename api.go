@@ -14,29 +14,24 @@ import (
 
 // BinanceReqBTC is the binance ticker from the API
 var BinanceReqBTC = "https://api.binance.com/api/v1/ticker/price?symbol=BTCUSDT"
-
 var BinanceReqETH = "https://api.binance.com/api/v1/ticker/price?symbol=ETHUSDT"
+var BinanceReqXRP = "https://api.binance.com/api/v1/ticker/price?symbol=XRPUSDT"
 
-// CoinbaseReqBTC is the coinbase ticker from the API
-var CoinbaseReqBTC = "https://api.pro.coinbase.com/products/BTC-USD/ticker"
-
-// CoinbaseReqETH is the coinbase ticker from the API
-var CoinbaseReqETH = "https://api.pro.coinbase.com/products/ETH-USD/ticker"
-
-// KrakenReqBTC is the kraken ticker from the API
-var KrakenReqBTC = "https://api.kraken.com/0/public/Ticker?pair=BTCUSD"
-
-// KrakenReqETH is the kraken ticker from the API
-var KrakenReqETH = "https://api.kraken.com/0/public/Ticker?pair=ETHUSD"
-
-// BinanceVolBTC is the binance ticker from the API
 var BinanceVolBTC = "https://api.binance.com/api/v1/ticker/24hr?symbol=BTCUSDT"
-
-// BinanceVolETH is the binance ticker from the API
 var BinanceVolETH = "https://api.binance.com/api/v1/ticker/24hr?symbol=ETHUSDT"
+var BinanceVolXRP = "https://api.binance.com/api/v1/ticker/24hr?symbol=XRPUSDT"
+
+var CoinbaseReqBTC = "https://api.pro.coinbase.com/products/BTC-USD/ticker"
+var CoinbaseReqETH = "https://api.pro.coinbase.com/products/ETH-USD/ticker"
+var CoinbaseReqXRP = "https://api.pro.coinbase.com/products/XRP-USD/ticker"
+
+var KrakenReqBTC = "https://api.kraken.com/0/public/Ticker?pair=BTCUSD"
+var KrakenReqETH = "https://api.kraken.com/0/public/Ticker?pair=ETHUSD"
+var KrakenReqXRP = "https://api.kraken.com/0/public/Ticker?pair=XRPUSD"
 
 var BitfinexReqBTC = "https://api-pub.bitfinex.com/v2/tickers?symbols=tBTCUSD"
 var BitfinexReqETH = "https://api-pub.bitfinex.com/v2/tickers?symbols=tETHUSD"
+var BitfinexReqXRP = "https://api-pub.bitfinex.com/v2/tickers?symbols=tXRPUSD"
 
 // BinanceTickerResponse defines the ticker API response from Binanace
 type BinanceTickerResponse struct {
@@ -72,6 +67,11 @@ type KrakenTickerResponse struct {
 			C []string // c = last trade closed array(<price>, <lot volume>),
 			V []string // volume array(<today>, <last 24 hours>)
 		}
+		XXRPZUSD struct {
+			// there's some additional info here but we don't require that
+			C []string // c = last trade closed array(<price>, <lot volume>),
+			V []string // volume array(<today>, <last 24 hours>)
+		}
 	}
 }
 
@@ -88,6 +88,8 @@ func BinanceTicker(coin string) (float64, error) {
 		data, err = erpc.GetRequest(BinanceReqBTC)
 	} else if coin == "ETH" {
 		data, err = erpc.GetRequest(BinanceReqETH)
+	} else if coin == "XRP" {
+		data, err = erpc.GetRequest(BinanceReqXRP)
 	}
 	if err != nil {
 		log.Println("did not get response", err)
@@ -103,6 +105,8 @@ func BinanceTicker(coin string) (float64, error) {
 	if coin == "BTC" && response.Symbol != "BTCUSDT" {
 		return -1, errors.New("ticker symbols don't match with API response")
 	} else if coin == "ETH" && response.Symbol != "ETHUSDT" {
+		return -1, errors.New("ticker symbols don't match with API response")
+	} else if coin == "XRP" && response.Symbol != "XRPUSDT" {
 		return -1, errors.New("ticker symbols don't match with API response")
 	}
 	// response.Price is in string, need to convert it to float
@@ -122,6 +126,8 @@ func BinanceVolume(coin string) (float64, error) {
 		data, err = erpc.GetRequest(BinanceVolBTC)
 	} else if coin == "ETH" {
 		data, err = erpc.GetRequest(BinanceVolETH)
+	} else if coin == "XRP" {
+		data, err = erpc.GetRequest(BinanceVolXRP)
 	}
 	if err != nil {
 		log.Println("did not get response", err)
@@ -156,6 +162,8 @@ func CoinbaseTicker(coin string) (float64, float64, error) {
 		data, err = erpc.GetRequest(CoinbaseReqBTC)
 	} else if coin == "ETH" {
 		data, err = erpc.GetRequest(CoinbaseReqETH)
+	} else if coin == "XRP" {
+		data, err = erpc.GetRequest(CoinbaseReqXRP)
 	}
 	if err != nil {
 		log.Println("did not get response", err)
@@ -191,6 +199,8 @@ func KrakenTicker(coin string) (float64, float64, error) {
 		data, err = erpc.GetRequest(KrakenReqBTC)
 	} else if coin == "ETH" {
 		data, err = erpc.GetRequest(KrakenReqETH)
+	} else if coin == "XRP" {
+		data, err = erpc.GetRequest(KrakenReqXRP)
 	}
 	if err != nil {
 		log.Println("did not get response", err)
@@ -205,20 +215,23 @@ func KrakenTicker(coin string) (float64, float64, error) {
 
 	// response.Price is in string, need to convert it to float
 	var price float64
-	if coin == "BTC" {
-		price, err = utils.ToFloat(response.Result.XXBTZUSD.C[0])
-	} else if coin == "ETH" {
-		price, err = utils.ToFloat(response.Result.XETHZUSD.C[0])
-	}
-
 	var volume float64
+
+	var err1 error
+	var err2 error
+
 	if coin == "BTC" {
-		volume, err = utils.ToFloat(response.Result.XXBTZUSD.V[1]) // we want volume over the last 24 hours
+		price, err1 = utils.ToFloat(response.Result.XXBTZUSD.C[0])
+		volume, err2 = utils.ToFloat(response.Result.XXBTZUSD.V[1]) // we want volume over the last 24 hours
 	} else if coin == "ETH" {
-		volume, err = utils.ToFloat(response.Result.XETHZUSD.V[1]) // we want volume over the last 24 hours
+		price, err1 = utils.ToFloat(response.Result.XETHZUSD.C[0])
+		volume, err2 = utils.ToFloat(response.Result.XETHZUSD.V[1]) // we want volume over the last 24 hours
+	} else if coin == "XRP" {
+		price, err1 = utils.ToFloat(response.Result.XXRPZUSD.C[0])
+		volume, err2 = utils.ToFloat(response.Result.XXRPZUSD.V[1]) // we want volume over the last 24 hours
 	}
 
-	if err != nil {
+	if err1 != nil || err2 != nil {
 		return -1, -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
 	}
 
@@ -233,6 +246,8 @@ func BitfinexTicker(coin string) (float64, float64, error) {
 		data, err = erpc.GetRequest(BitfinexReqBTC)
 	} else if coin == "ETH" {
 		data, err = erpc.GetRequest(BitfinexReqETH)
+	} else if coin == "XRP" {
+		data, err = erpc.GetRequest(BitfinexReqXRP)
 	}
 	if err != nil {
 		log.Println("did not get response", err)
