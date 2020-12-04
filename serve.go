@@ -61,9 +61,27 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Binance.BTCVolume, err = BinanceVolume("BTC")
+			if err != nil {
+				Return.Binance.BTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Binance.ETHPrice, err = BinanceTicker("ETH")
 			if err != nil {
 				Return.Binance.ETHPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Binance.ETHVolume, err = BinanceVolume("ETH")
+			if err != nil {
+				Return.Binance.ETHVolume = -1
 			}
 		}(&wg)
 
@@ -79,9 +97,27 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Coinbase.BTCVolume, err = CoinbaseVolume("BTC")
+			if err != nil {
+				Return.Coinbase.BTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Coinbase.ETHPrice, err = CoinbaseTicker("ETH")
 			if err != nil {
 				Return.Coinbase.ETHPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Coinbase.ETHVolume, err = CoinbaseVolume("ETH")
+			if err != nil {
+				Return.Coinbase.ETHVolume = -1
 			}
 		}(&wg)
 
@@ -97,9 +133,27 @@ func frontend() {
 		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
 			defer wg.Done()
+			Return.Kraken.BTCVolume, err = KrakenVolume("BTC")
+			if err != nil {
+				Return.Kraken.BTCVolume = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Return.Kraken.ETHPrice, err = KrakenTicker("ETH")
 			if err != nil {
 				Return.Kraken.ETHPrice = -1
+			}
+		}(&wg)
+
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			Return.Kraken.ETHVolume, err = KrakenVolume("ETH")
+			if err != nil {
+				Return.Kraken.ETHVolume = -1
 			}
 		}(&wg)
 

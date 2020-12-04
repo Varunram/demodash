@@ -259,8 +259,12 @@ func KrakenVolume(coin string) (float64, error) {
 		return -1, errors.Wrap(err, "could not unmarshal response")
 	}
 
-	// response.Price is in string, need to convert it to float
-	volume, err := utils.ToFloat(response.Result.XXBTZUSD.V[1]) // we want volume over the last 24 hours
+	var volume float64
+	if coin == "BTC" {
+		volume, err = utils.ToFloat(response.Result.XXBTZUSD.V[1]) // we want volume over the last 24 hours
+	} else if coin == "ETH" {
+		volume, err = utils.ToFloat(response.Result.XETHZUSD.V[1]) // we want volume over the last 24 hours
+	}
 	if err != nil {
 		return -1, errors.Wrap(err, "could not convert price from string to float, quitting!")
 	}

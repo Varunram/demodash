@@ -1,13 +1,53 @@
-<html>
-    <head>
-        <title>Crypto Dashboard</title>
-    </head>
-    <body>
-        Binance BTC: {{.Binance.BTCPrice}}
-        Binance ETH: {{.Binance.ETHPrice}}
-        Coinbase BTC: {{.Coinbase.BTCPrice}}
-        Coinbase ETH: {{.Coinbase.ETHPrice}}
-        Kraken BTC: {{.Kraken.BTCPrice}}
-        Kraken ETH: {{.Kraken.ETHPrice}}
-    </body>
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Cryptocurrency Demo Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<h1>Cryptocurrency Demo Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2" colspan="1">Name</th>
+                <th rowspan="1" colspan="2">BTC</th>
+                <th rowspan="1" colspan="2">ETH</th>
+            </tr>
+            <tr>
+                <th rowspan="2">Price</th>
+                <th rowspan="2">Volume</th>
+                <th rowspan="2">Price</th>
+                <th rowspan="2">Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Binance</td>
+                <td>{{.Binance.BTCPrice}}</td>
+                <td>{{.Binance.BTCVolume}}</td>
+                <td>{{.Binance.ETHPrice}}</td>
+                <td>{{.Binance.ETHVolume}}</td>
+            </tr>
+            <tr>
+                <td>Coinbase</td>
+                <td>{{.Coinbase.BTCPrice}}</td>
+                <td>{{.Coinbase.BTCVolume}}</td>
+                <td>{{.Coinbase.ETHPrice}}</td>
+                <td>{{.Coinbase.ETHVolume}}</td>
+            </tr>
+            <tr>
+                <td>Kraken</td>
+                <td>{{.Kraken.BTCPrice}}</td>
+                <td>{{.Kraken.BTCVolume}}</td>
+                <td>{{.Kraken.ETHPrice}}</td>
+                <td>{{.Kraken.ETHVolume}}</td>
+            </tr>
+        </tbody>
+    </table>
+<!-- partial -->
+  
+</body>
 </html>
